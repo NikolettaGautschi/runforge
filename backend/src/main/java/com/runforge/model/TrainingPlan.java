@@ -1,5 +1,6 @@
 package com.runforge.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -35,5 +36,6 @@ public class TrainingPlan {
     private LocalDate createdDate = LocalDate.now();
 
     @OneToMany(mappedBy = "trainingPlan", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<PlanAssignment> assignments;
 }
