@@ -1,9 +1,9 @@
-// src/services/api.ts
+// src/services/apiV01.ts
 import axios from 'axios';
 import type { Member, TrainingPlan, DashboardStats } from '../types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://localhost:8080/api/v01',
   headers: { 'Content-Type': 'application/json' },
 });
 

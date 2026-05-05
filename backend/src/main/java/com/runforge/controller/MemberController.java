@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/v01/members")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class MemberController {

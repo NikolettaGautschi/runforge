@@ -174,32 +174,32 @@ Member ──────────────────── PlanAssignme
 
 ## REST API Endpunkte
 
-### Mitglieder  `/ api/members`
+### Mitglieder  `/v01/members`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
-| GET | `/api/members` | Alle Mitglieder |
-| GET | `/api/members/active` | Nur aktive Mitglieder |
-| GET | `/api/members/{id}` | Einzelnes Mitglied |
-| POST | `/api/members` | Neues Mitglied erstellen |
-| PUT | `/api/members/{id}` | Mitglied bearbeiten |
-| DELETE | `/api/members/{id}` | Soft Delete (active = false) |
+| GET | `/v01/members` | Alle Mitglieder |
+| GET | `/v01/members/active` | Nur aktive Mitglieder |
+| GET | `/v01/members/{id}` | Einzelnes Mitglied |
+| POST | `/v01/members` | Neues Mitglied erstellen |
+| PUT | `/v01/members/{id}` | Mitglied bearbeiten |
+| DELETE | `/v01/members/{id}` | Soft Delete (active = false) |
 
-### Trainingspläne  `/api/plans`
-
-| Methode | Pfad | Beschreibung |
-|---------|------|--------------|
-| GET | `/api/plans` | Alle Pläne |
-| GET | `/api/plans/{id}` | Einzelner Plan |
-| POST | `/api/plans` | Neuen Plan erstellen |
-| PUT | `/api/plans/{id}` | Plan bearbeiten |
-| DELETE | `/api/plans/{id}` | Plan löschen |
-
-### Statistiken  `/api/stats`
+### Trainingspläne  `/v01/plans`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
-| GET | `/api/stats/dashboard` | Aggregierte Dashboard-Daten |
+| GET | `/v01/plans` | Alle Pläne |
+| GET | `/v01/plans/{id}` | Einzelner Plan |
+| POST | `/v01/plans` | Neuen Plan erstellen |
+| PUT | `/v01/plans/{id}` | Plan bearbeiten |
+| DELETE | `/v01/plans/{id}` | Plan löschen |
+
+### Statistiken  `/v01/stats`
+
+| Methode | Pfad | Beschreibung |
+|---------|------|--------------|
+| GET | `/v01/stats/dashboard` | Aggregierte Dashboard-Daten |
 
 ---
 

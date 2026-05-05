@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/stats")
+@RequestMapping("/v01/stats")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class StatisticsController {
