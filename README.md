@@ -1,13 +1,13 @@
-# Morcelli RunForge — Gesamtarchitektur
+# RunForge — Gesamtarchitektur
 
 > *Forge your run.* — Ein Trainingsplan-Management-Tool für runforgen  
-> © 2026 Patricia Morcelli · Morcelli RunForge
+> © 2026 RunForge
 
 ---
 
 ## Überblick
 
-Morcelli RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und H2-Datenbank (entwicklungsnah, einfach zu PostgreSQL migrierbar).
+RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und H2-Datenbank (entwicklungsnah, einfach zu PostgreSQL migrierbar).
 
 ---
 
@@ -33,7 +33,7 @@ Morcelli RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Train
 ## Projektstruktur
 
 ```
-morcelli-runforge/
+runforge/
 ├── README.md
 ├── backend/
 │   ├── pom.xml
@@ -313,4 +313,4 @@ spring.h2.console.enabled=false
 
 ---
 
-*Morcelli RunForge · © 2026 Patricia Morcelli · Forge your run.*
+*RunForge · © 2026 · Forge your run.*
