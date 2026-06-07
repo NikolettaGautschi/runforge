@@ -1,19 +1,50 @@
-// src/pages/DashboardPage.tsx
+/**
+ * src/pages/DashboardPage.tsx — Dashboard page with statistics and charts
+ *
+ * Displays aggregated statistics for the running group:
+ * - Four stat cards: total/active members, plans count, active assignments
+ * - Pie chart: member distribution by running level
+ * - Bar chart: comparison of active vs completed assignments
+ *
+ * Uses TanStack Query to fetch statistics from /api/stats/dashboard.
+ * Charts rendered with Recharts library and custom color scheme.
+ */
+
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
 import { statsApi } from '../services/api';
 import { LEVEL_LABELS, LEVEL_COLORS, type RunningLevel } from '../types';
 
+/**
+ * DashboardPage component — Renders dashboard statistics and charts.
+ *
+ * @returns JSX element or loading/error state
+ */
 export default function DashboardPage() {
+  /**
+   * Fetch dashboard statistics using TanStack Query.
+   * - queryKey: ['stats'] — cache key for invalidation
+   * - queryFn: statsApi.getDashboard — async function to fetch data
+   * - staleTime: 30s (set in App.tsx defaultOptions)
+   */
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ['stats'],
     queryFn: statsApi.getDashboard,
   });
 
+  // Loading state
   if (isLoading) return <div className="loading">Lade Dashboard...</div>;
+
+  // Error state (backend might be down)
   if (error) return <div className="loading">Fehler beim Laden — läuft das Backend? (Port 8080)</div>;
+
+  // No data
   if (!stats) return null;
 
+  /**
+   * Transform membersByLevel distribution into chart-ready format.
+   * Maps level enum (BEGINNER, etc.) to German labels and colors.
+   */
   const levelData = stats.membersByLevel
     ? Object.entries(stats.membersByLevel).map(([key, value]) => ({
         name: LEVEL_LABELS[key as RunningLevel] ?? key,
@@ -22,6 +53,10 @@ export default function DashboardPage() {
       }))
     : [];
 
+  /**
+   * Prepare data for assignment status bar chart.
+   * Shows active (incomplete) vs completed assignments side-by-side.
+   */
   const assignmentData = [
     { name: 'Aktiv', value: stats.activeAssignments, color: '#3b82f6' },
     { name: 'Abgeschlossen', value: stats.completedAssignments, color: '#10b981' },
@@ -29,6 +64,7 @@ export default function DashboardPage() {
 
   return (
     <div>
+      {/* Page Header */}
       <div className="page-header">
         <div>
           <div className="page-title">Dashboard</div>
@@ -36,26 +72,36 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Statistics Cards Grid */}
       <div className="stats-grid">
+        {/* Total Members Card */}
         <div className="stat-card">
           <div className="stat-label">Mitglieder gesamt</div>
           <div className="stat-value blue">{stats.totalMembers}</div>
         </div>
+
+        {/* Active Members Card */}
         <div className="stat-card">
           <div className="stat-label">Aktive Mitglieder</div>
           <div className="stat-value green">{stats.activeMembers}</div>
         </div>
+
+        {/* Training Plans Card */}
         <div className="stat-card">
           <div className="stat-label">Trainingspläne</div>
           <div className="stat-value purple">{stats.totalPlans}</div>
         </div>
+
+        {/* Active Assignments Card */}
         <div className="stat-card">
           <div className="stat-label">Aktive Zuweisungen</div>
           <div className="stat-value amber">{stats.activeAssignments}</div>
         </div>
       </div>
 
+      {/* Charts Grid */}
       <div className="charts-grid">
+        {/* Pie Chart: Members by Level */}
         <div className="card">
           <div className="card-title">Mitglieder nach Level</div>
           {levelData.length > 0 ? (
@@ -73,6 +119,7 @@ export default function DashboardPage() {
           ) : (
             <div className="empty">Keine Daten</div>
           )}
+          {/* Legend with color indicators */}
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8 }}>
             {levelData.map(d => (
               <span key={d.name} style={{ fontSize: 12, color: '#8b98b1', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -83,6 +130,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Bar Chart: Assignment Status */}
         <div className="card">
           <div className="card-title">Trainingszuweisungen</div>
           <ResponsiveContainer width="100%" height={220}>
@@ -93,6 +141,7 @@ export default function DashboardPage() {
                 contentStyle={{ background: '#1e2535', border: '1px solid #2a3349', borderRadius: 8, fontSize: 13 }}
               />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                {/* Color each bar segment */}
                 {assignmentData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
               </Bar>
             </BarChart>

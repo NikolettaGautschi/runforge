@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="/RunforgeApplication (snapshot).java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="/RunforgeApplication (snapshot).java" />
+              <option name="originalContent" value="package com.runforge;&#10;&#10;import org.springframework.boot.SpringApplication;&#10;import org.springframework.boot.autoconfigure.SpringBootApplication;&#10;&#10;@SpringBootApplication&#10;public class RunforgeApplication {&#10;    public static void main(String[] args) {&#10;        SpringApplication.run(RunforgeApplication.class, args);&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="package com.runforge;&#10;&#10;import org.springframework.boot.SpringApplication;&#10;import org.springframework.boot.autoconfigure.SpringBootApplication;&#10;&#10;/**&#10; * RunforgeApplication — Main entry point for the RunForge backend service.&#10; *&#10; * &lt;p&gt;This Spring Boot 3.2 application provides a REST API for managing running group&#10; * members, training plans, and statistics. It uses Spring Data JPA with H2 in-memory&#10; * database (development) or PostgreSQL (production).&#10; *&#10; * &lt;p&gt;Features:&#10; * &lt;ul&gt;&#10; *   &lt;li&gt;Member CRUD operations with soft-delete support (active flag)&lt;/li&gt;&#10; *   &lt;li&gt;Training plan management&lt;/li&gt;&#10; *   &lt;li&gt;Plan assignment tracking&lt;/li&gt;&#10; *   &lt;li&gt;Dashboard statistics aggregation&lt;/li&gt;&#10; *   &lt;li&gt;CORS-enabled REST endpoints&lt;/li&gt;&#10; * &lt;/ul&gt;&#10; *&#10; * &lt;p&gt;Runs on port 8080. H2 console available at http://localhost:8080/h2-console (dev only).&#10; *&#10; * @author RunForge Team&#10; * @version 0.0.1&#10; */&#10;@SpringBootApplication&#10;public class RunforgeApplication {&#10;    /**&#10;     * Entry point for the RunForge backend application.&#10;     *&#10;     * @param args command-line arguments&#10;     */&#10;    public static void main(String[] args) {&#10;        SpringApplication.run(RunforgeApplication.class, args);&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

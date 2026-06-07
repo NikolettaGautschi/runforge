@@ -42,19 +42,19 @@ runforge/
 │       │   ├── runforgeApplication.java
 │       │   ├── model/
 │       │   │   ├── Member.java
-│       │   │   ├── TrainingPlan.java
+│       │   │   ├── RunningPlan.java
 │       │   │   └── PlanAssignment.java
 │       │   ├── repository/
 │       │   │   ├── MemberRepository.java
-│       │   │   ├── TrainingPlanRepository.java
+│       │   │   ├── RunningPlanRepository.java
 │       │   │   └── PlanAssignmentRepository.java
 │       │   ├── service/
 │       │   │   ├── MemberService.java
-│       │   │   ├── TrainingPlanService.java
+│       │   │   ├── RunningPlanService.java
 │       │   │   └── StatisticsService.java
 │       │   └── controller/
 │       │       ├── MemberController.java
-│       │       ├── TrainingPlanController.java
+│       │       ├── RunningPlanController.java
 │       │       └── StatisticsController.java
 │       └── resources/
 │           ├── application.properties
@@ -86,7 +86,7 @@ runforge/
 │              FRONTEND  ·  React + TypeScript             │
 │                     Port 3000 · Vite                     │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐  │
-│  │  Dashboard   │  │  Mitglieder  │  │ Trainingspläne│  │
+│  │  Dashboard   │  │  Mitglieder  │  │ Laufpläne│  │
 │  │  (Charts)    │  │  (CRUD)      │  │ (CRUD)        │  │
 │  └──────────────┘  └──────────────┘  └───────────────┘  │
 └────────────────────────┬────────────────────────────────┘
@@ -138,7 +138,7 @@ runforge/
 | joinedDate | LocalDate | Beitrittsdatum |
 | active | boolean | Soft-Delete-Flag |
 
-**TrainingPlan** (Trainingsplan)
+**RunningPlan** (Trainingsplan)
 
 | Feld | Typ | Beschreibung |
 |------|-----|--------------|
@@ -146,8 +146,6 @@ runforge/
 | name | String | Name des Plans |
 | description | String | Beschreibung |
 | level | Enum | Ziellevel |
-| durationWeeks | int | Laufzeit in Wochen |
-| weeklyKm | int | Wochenkilometer |
 | createdDate | LocalDate | Erstellungsdatum |
 
 **PlanAssignment** (Zuweisung)
@@ -156,7 +154,7 @@ runforge/
 |------|-----|--------------|
 | id | Long | Primärschlüssel |
 | member | Member | FK → Mitglied |
-| trainingPlan | TrainingPlan | FK → Plan |
+| RunningPlan | RunningPlan | FK → Plan |
 | startDate | LocalDate | Startdatum |
 | endDate | LocalDate | Enddatum |
 | completed | boolean | Abgeschlossen? |
@@ -164,7 +162,7 @@ runforge/
 ### Beziehungen
 
 ```
-Member ──────────────────── PlanAssignment ──────────────────── TrainingPlan
+Member ──────────────────── PlanAssignment ──────────────────── RunningPlan
   1                               N : 1                               1
   └── Ein Mitglied kann           └── Zuweisung verbindet    ─────────┘
       mehrere Pläne haben             Mitglied und Plan
@@ -185,7 +183,7 @@ Member ──────────────────── PlanAssignme
 | PUT | `/api/members/{id}` | Mitglied bearbeiten |
 | DELETE | `/api/members/{id}` | Soft Delete (active = false) |
 
-### Trainingspläne  `/api/plans`
+### Laufpläne  `/api/plans`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
@@ -215,7 +213,7 @@ Member ──────────────────── PlanAssignme
 - Modal-Formular: Erstellen / Bearbeiten
 - Soft-Delete über Trash-Icon
 
-### Trainingspläne (`/plans`)
+### Laufpläne (`/plans`)
 - Karten-Grid mit Plan-Details (Dauer, km/Woche, Level)
 - Modal-Formular: Erstellen / Bearbeiten
 - Löschen per Icon
@@ -229,18 +227,21 @@ Member ──────────────────── PlanAssignme
 ```properties
 spring.application.name=runforge-backend
 server.port=8080
-
-# H2 In-Memory (Entwicklung)
+spring.application.name=runforge-backend
+server.port=8080
 spring.datasource.url=jdbc:h2:mem:runforgedb;DB_CLOSE_DELAY=-1
 spring.datasource.driverClassName=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.show-sql=true
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.defer-datasource-initialization=true
 spring.h2.console.enabled=true
 spring.h2.console.path=/h2-console
 spring.sql.init.mode=always
+spring.sql.init.data-locations=classpath:data.sql
 ```
 
 ### Frontend `vite.config.ts`
