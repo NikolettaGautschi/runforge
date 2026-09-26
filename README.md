@@ -25,8 +25,8 @@ RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplän
 | Sprache | Java | 21 |
 | ORM | Spring Data JPA / Hibernate | — |
 | Validierung | Jakarta Validation | — |
-| Datenbank (dev) | H2 In-Memory | — |
-| Datenbank (prod) | PostgreSQL | 15+ |
+| Datenbank | Supabase (PostgreSQL) | 15+ |
+| DB-Name | RunForgeDb | — |
 
 ---
 
@@ -113,9 +113,9 @@ runforge/
                         │ JPA / JDBC
                         ▼
 ┌─────────────────────────────────────────────────────────┐
-│              DATENBANK  ·  H2 In-Memory (dev)            │
+│              DATENBANK  ·  Supabase (PostgreSQL)          │
 │        members · training_plans · plan_assignments       │
-│                  /h2-console (dev only)                  │
+│               DB-Name: RunForgeDb                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -230,18 +230,21 @@ Member ──────────────────── PlanAssignme
 spring.application.name=runforge-backend
 server.port=8080
 
-# H2 In-Memory (Entwicklung)
-spring.datasource.url=jdbc:h2:mem:runforgedb;DB_CLOSE_DELAY=-1
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=create-drop
+# Supabase (PostgreSQL) - Verbindungsdaten via Umgebungsvariablen
+spring.datasource.url=${SUPABASE_DB_URL:jdbc:postgresql://localhost:5432/RunForgeDb}
+spring.datasource.username=${SUPABASE_DB_USER:postgres}
+spring.datasource.password=${SUPABASE_DB_PASSWORD:}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
 spring.jpa.show-sql=true
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-spring.sql.init.mode=always
+
+spring.h2.console.enabled=false
+spring.sql.init.mode=${SPRING_SQL_INIT_MODE:never}
 ```
+
+Die tatsächlichen Werte für `SUPABASE_DB_URL`, `SUPABASE_DB_USER` und `SUPABASE_DB_PASSWORD` werden **nicht** im Code hinterlegt, sondern als Umgebungsvariablen gesetzt. Eine Vorlage dafür liefert `backend/.env.example`.
 
 ### Frontend `vite.config.ts`
 
@@ -277,26 +280,11 @@ npm run dev
 
 ---
 
-## Migration zu PostgreSQL
+## Datenbank: Supabase (PostgreSQL)
 
-1. `pom.xml`: H2-Dependency durch PostgreSQL ersetzen:
-```xml
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-</dependency>
-```
+RunForge nutzt Supabase als produktive PostgreSQL-Datenbank (DB-Name: `RunForgeDb`). Die JDBC-Treiber-Dependency (`org.postgresql:postgresql`) ist bereits in `backend/pom.xml` enthalten.
 
-2. `application.properties` anpassen:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/runforge
-spring.datasource.username=postgres
-spring.datasource.password=deinPasswort
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-spring.h2.console.enabled=false
-```
+Verbindungsdaten werden ausschließlich über Umgebungsvariablen konfiguriert (siehe Abschnitt „Backend `application.properties`" oben sowie `backend/.env.example`). Es sind keine Zugangsdaten im Code oder in `application.properties` hinterlegt.
 
 ---
 
