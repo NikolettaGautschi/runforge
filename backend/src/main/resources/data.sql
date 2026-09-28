@@ -3,15 +3,24 @@ INSERT INTO member (id, first_name, last_name, email, phone, level, joined_date,
   (2, 'Tobias', 'Keller', 'tobias.keller@example.com', '+41 79 222 33 44', 'BEGINNER', '2024-01-10', true),
   (3, 'Sabine', 'Braun', 'sabine.braun@example.com', '+41 79 333 44 55', 'ADVANCED', '2022-06-01', true),
   (4, 'Marco', 'Huber', 'marco.huber@example.com', '+41 79 444 55 66', 'BEGINNER', '2024-03-20', true),
-  (5, 'Lisa', 'Weber', 'lisa.weber@example.com', '+41 79 555 66 77', 'INTERMEDIATE', '2023-09-05', false);
+  (5, 'Lisa', 'Weber', 'lisa.weber@example.com', '+41 79 555 66 77', 'INTERMEDIATE', '2023-09-05', false)
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO training_plan (id, name, description, level, duration_weeks, weekly_km, created_date) VALUES
   (1, '5km Einsteiger-Plan', 'Perfekt für absolute Neulinge. Aufbau von 0 auf 5km in 8 Wochen.', 'BEGINNER', 8, 15, '2024-01-01'),
   (2, 'Halbmarathon Vorbereitung', '12-wöchiger Aufbauplan für den ersten Halbmarathon.', 'INTERMEDIATE', 12, 45, '2024-01-01'),
-  (3, 'Marathon Fortgeschrittene', 'Intensiver 16-wöchiger Marathonplan mit Intervalltraining.', 'ADVANCED', 16, 70, '2024-01-01');
+  (3, 'Marathon Fortgeschrittene', 'Intensiver 16-wöchiger Marathonplan mit Intervalltraining.', 'ADVANCED', 16, 70, '2024-01-01')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO plan_assignment (id, member_id, training_plan_id, start_date, end_date, completed) VALUES
   (1, 1, 2, '2024-02-01', '2024-04-25', false),
   (2, 2, 1, '2024-03-01', '2024-04-26', false),
   (3, 3, 3, '2024-01-15', '2024-05-13', false),
-  (4, 4, 1, '2024-04-01', '2024-05-27', false);
+  (4, 4, 1, '2024-04-01', '2024-05-27', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Keep the identity sequences in sync with the explicitly inserted ids above,
+-- so that subsequent inserts via the application don't collide with these rows.
+SELECT setval(pg_get_serial_sequence('member', 'id'), COALESCE((SELECT MAX(id) FROM member), 1));
+SELECT setval(pg_get_serial_sequence('training_plan', 'id'), COALESCE((SELECT MAX(id) FROM training_plan), 1));
+SELECT setval(pg_get_serial_sequence('plan_assignment', 'id'), COALESCE((SELECT MAX(id) FROM plan_assignment), 1));
