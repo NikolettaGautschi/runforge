@@ -11,6 +11,6 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-   allowedHosts: ['localhost', 'sb-30qysja1tb89.vercel.run'']
+   allowedHosts: ['localhost', 'sb-30qysja1tb89.vercel.run']
   },
 });
