@@ -227,18 +227,12 @@ Member ──────────────────── PlanAssignme
 ```properties
 spring.application.name=runforge-backend
 server.port=8080
-spring.datasource.url=jdbc:h2:mem:runforgedb;DB_CLOSE_DELAY=-1
 spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.show-sql=false
+
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.defer-datasource-initialization=true
-spring.h2.console.enabled=true
+
 spring.h2.console.path=/h2-console
-spring.sql.init.mode=always
 spring.sql.init.data-locations=classpath:data.sql
 
 # Lokale Secrets aus backend/.env laden (echte Umgebungsvariablen haben Vorrang)
@@ -283,7 +277,7 @@ Voraussetzungen: **Java 21** (`java -version` bzw. `JAVA_HOME` prüfen) und eine
 ```bash
 # Backend
 cd backend
-./mvnw spring-boot:run      # Windows (cmd): mvnw.cmd spring-boot:run
+mvnw spring-boot:run    
 # → http://localhost:8080
 
 # Frontend (neues Terminal)
