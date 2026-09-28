@@ -7,7 +7,7 @@
 
 ## Überblick
 
-RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und H2-Datenbank (entwicklungsnah, einfach zu PostgreSQL migrierbar).
+RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und Supabase (PostgreSQL) als Datenbank.
 
 ---
 
@@ -25,8 +25,8 @@ RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplän
 | Sprache | Java | 21 |
 | ORM | Spring Data JPA / Hibernate | — |
 | Validierung | Jakarta Validation | — |
-| Datenbank (dev) | H2 In-Memory | — |
-| Datenbank (prod) | PostgreSQL | 15+ |
+| Datenbank | Supabase (PostgreSQL) | 15+ |
+| DB-Name | postgres (Supabase-Standard) | — |
 
 ---
 
@@ -113,9 +113,9 @@ runforge/
                         │ JPA / JDBC
                         ▼
 ┌─────────────────────────────────────────────────────────┐
-│              DATENBANK  ·  H2 In-Memory (dev)            │
+│              DATENBANK  ·  Supabase (PostgreSQL)          │
 │        members · training_plans · plan_assignments       │
-│                  /h2-console (dev only)                  │
+│                   DB-Name: postgres                      │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -172,32 +172,32 @@ Member ──────────────────── PlanAssignme
 
 ## REST API Endpunkte
 
-### Mitglieder  `/ api/members`
+### Mitglieder  `/v01/members`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
-| GET | `/api/members` | Alle Mitglieder |
-| GET | `/api/members/active` | Nur aktive Mitglieder |
-| GET | `/api/members/{id}` | Einzelnes Mitglied |
-| POST | `/api/members` | Neues Mitglied erstellen |
-| PUT | `/api/members/{id}` | Mitglied bearbeiten |
-| DELETE | `/api/members/{id}` | Soft Delete (active = false) |
+| GET | `/v01/members` | Alle Mitglieder |
+| GET | `/v01/members/active` | Nur aktive Mitglieder |
+| GET | `/v01/members/{id}` | Einzelnes Mitglied |
+| POST | `/v01/members` | Neues Mitglied erstellen |
+| PUT | `/v01/members/{id}` | Mitglied bearbeiten |
+| DELETE | `/v01/members/{id}` | Soft Delete (active = false) |
 
 ### Laufpläne  `/api/plans`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
-| GET | `/api/plans` | Alle Pläne |
-| GET | `/api/plans/{id}` | Einzelner Plan |
-| POST | `/api/plans` | Neuen Plan erstellen |
-| PUT | `/api/plans/{id}` | Plan bearbeiten |
-| DELETE | `/api/plans/{id}` | Plan löschen |
+| GET | `/v01/plans` | Alle Pläne |
+| GET | `/v01/plans/{id}` | Einzelner Plan |
+| POST | `/v01/plans` | Neuen Plan erstellen |
+| PUT | `/v01/plans/{id}` | Plan bearbeiten |
+| DELETE | `/v01/plans/{id}` | Plan löschen |
 
-### Statistiken  `/api/stats`
+### Statistiken  `/v01/stats`
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
-| GET | `/api/stats/dashboard` | Aggregierte Dashboard-Daten |
+| GET | `/v01/stats/dashboard` | Aggregierte Dashboard-Daten |
 
 ---
 
@@ -227,8 +227,6 @@ Member ──────────────────── PlanAssignme
 ```properties
 spring.application.name=runforge-backend
 server.port=8080
-spring.application.name=runforge-backend
-server.port=8080
 spring.datasource.url=jdbc:h2:mem:runforgedb;DB_CLOSE_DELAY=-1
 spring.datasource.driverClassName=org.h2.Driver
 spring.datasource.username=sa
@@ -242,7 +240,25 @@ spring.h2.console.enabled=true
 spring.h2.console.path=/h2-console
 spring.sql.init.mode=always
 spring.sql.init.data-locations=classpath:data.sql
+
+# Lokale Secrets aus backend/.env laden (echte Umgebungsvariablen haben Vorrang)
+spring.config.import=optional:file:.env[.properties],optional:file:backend/.env[.properties]
+
+# Supabase (PostgreSQL) - Verbindungsdaten via Umgebungsvariablen
+spring.datasource.url=${SUPABASE_DB_URL:jdbc:postgresql://localhost:5432/RunForgeDb}
+spring.datasource.username=${SUPABASE_DB_USER:postgres}
+spring.datasource.password=${SUPABASE_DB_PASSWORD:}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+spring.jpa.show-sql=true
+
+spring.h2.console.enabled=false
+spring.sql.init.mode=${SPRING_SQL_INIT_MODE:never}
 ```
+
+Die tatsächlichen Werte für `SUPABASE_DB_URL`, `SUPABASE_DB_USER` und `SUPABASE_DB_PASSWORD` werden **nicht** im Code hinterlegt, sondern in `backend/.env` (wird nicht committet) oder als Umgebungsvariablen gesetzt. Eine Vorlage dafür liefert `backend/.env.example`.
 
 ### Frontend `vite.config.ts`
 
@@ -262,12 +278,13 @@ export default defineConfig({
 
 ## Starten
 
+Voraussetzungen: **Java 21** (`java -version` bzw. `JAVA_HOME` prüfen) und eine ausgefüllte `backend/.env` (Vorlage: `backend/.env.example`). Maven muss nicht installiert sein — der Maven Wrapper (`mvnw`) liegt im Backend.
+
 ```bash
 # Backend
 cd backend
-./mvnw spring-boot:run
+./mvnw spring-boot:run      # Windows (cmd): mvnw.cmd spring-boot:run
 # → http://localhost:8080
-# → http://localhost:8080/h2-console
 
 # Frontend (neues Terminal)
 cd frontend
@@ -278,26 +295,13 @@ npm run dev
 
 ---
 
-## Migration zu PostgreSQL
+## Datenbank: Supabase (PostgreSQL)
 
-1. `pom.xml`: H2-Dependency durch PostgreSQL ersetzen:
-```xml
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-</dependency>
-```
+RunForge nutzt Supabase als produktive PostgreSQL-Datenbank (DB-Name: `postgres`, Supabase-Standard). Die JDBC-Treiber-Dependency (`org.postgresql:postgresql`) ist bereits in `backend/pom.xml` enthalten.
 
-2. `application.properties` anpassen:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/runforge
-spring.datasource.username=postgres
-spring.datasource.password=deinPasswort
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-spring.h2.console.enabled=false
-```
+**Wichtig:** `SUPABASE_DB_URL` ist eine JDBC-URL (`jdbc:postgresql://...`), **nicht** die Projekt-/API-URL (`https://<ref>.supabase.co`). Den passenden Connection String findest du im Supabase-Dashboard unter **Connect → Session pooler** (funktioniert auch ohne IPv6). Beim Pooler lautet der Benutzer `postgres.<project-ref>`, das Passwort ist das Datenbank-Passwort (nicht der API-Key).
+
+Verbindungsdaten werden ausschließlich über Umgebungsvariablen konfiguriert (siehe Abschnitt „Backend `application.properties`" oben sowie `backend/.env.example`). Es sind keine Zugangsdaten im Code oder in `application.properties` hinterlegt.
 
 ---
 

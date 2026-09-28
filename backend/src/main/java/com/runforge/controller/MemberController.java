@@ -29,7 +29,7 @@ import java.util.List;
  * @see MemberService
  */
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/v01/members")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class MemberController {

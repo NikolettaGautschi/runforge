@@ -22,7 +22,7 @@ import java.util.Map;
  * @see StatisticsService
  */
 @RestController
-@RequestMapping("/api/stats")
+@RequestMapping("/v01/stats")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class StatisticsController {

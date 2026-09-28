@@ -1,0 +1,9 @@
+# Environment secrets
+.env
+backend/.env
+http-client.env.json
+
+# Build output and dependencies
+/backend/target/
+/frontend/node_modules/
+/frontend/dist/

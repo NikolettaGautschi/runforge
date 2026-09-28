@@ -1,5 +1,6 @@
 package com.runforge.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,7 @@ public class PlanAssignment {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @JsonBackReference
     private Member member;
 
     /**
@@ -53,6 +55,7 @@ public class PlanAssignment {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_plan_id", nullable = false)
+    @JsonBackReference
     private TrainingPlan trainingPlan;
 
     /**

@@ -8,6 +8,7 @@
  * Errors are thrown and must be handled by the calling component.
  */
 
+// src/services/apiV01.ts
 import axios from 'axios';
 import type { Member, RunningPlan, DashboardStats } from '../types';
 
@@ -18,7 +19,7 @@ import type { Member, RunningPlan, DashboardStats } from '../types';
  * - All requests automatically include JSON serialization
  */
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://localhost:8080/api/v01',
   headers: { 'Content-Type': 'application/json' },
 });
 

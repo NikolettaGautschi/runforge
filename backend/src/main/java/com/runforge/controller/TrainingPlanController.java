@@ -28,7 +28,7 @@ import java.util.List;
  * @see TrainingService
  */
 @RestController
-@RequestMapping("/api/plans")
+@RequestMapping("/v01/plans")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class TrainingPlanController {

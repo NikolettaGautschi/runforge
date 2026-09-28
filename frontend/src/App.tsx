@@ -43,12 +43,12 @@ export default function App() {
       <header>
         {/* Show sign-in/sign-up when user is NOT authenticated */}
         <Show when="signed-out">
-          <div className="logo">
-            <Footprints size={28} strokeWidth={1.5} />
-            <span>runforge</span>
-          </div>
-          <SignInButton className="btn"/>
-          <SignUpButton className="btn"/>
+             <div className="logo">
+               <Footprints size={28} strokeWidth={1.5} />
+               <span>runforge</span>
+             </div>
+          <SignInButton><button className="btn">Anmelden</button></SignInButton>
+          <SignUpButton><button className="btn">Registrieren</button></SignUpButton>
         </Show>
 
         {/* Show main app when user IS authenticated */}
