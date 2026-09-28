@@ -20,8 +20,8 @@ export default function App() {
                <Footprints size={28} strokeWidth={1.5} />
                <span>runforge</span>
              </div>
-          <SignInButton className="btn"/>
-          <SignUpButton className="btn"/>
+          <SignInButton><button className="btn">Anmelden</button></SignInButton>
+          <SignUpButton><button className="btn">Registrieren</button></SignUpButton>
         </Show>
         <Show when="signed-in">
           <UserButton />
