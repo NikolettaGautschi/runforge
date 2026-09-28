@@ -272,7 +272,7 @@ Voraussetzungen: **Java 21** (`java -version` bzw. `JAVA_HOME` prüfen) und eine
 ```bash
 # Backend
 cd backend
-./mvnw spring-boot:run      # Windows (cmd): mvnw.cmd spring-boot:run
+mvnw spring-boot:run    
 # → http://localhost:8080
 
 # Frontend (neues Terminal)
