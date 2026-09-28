@@ -7,7 +7,7 @@
 
 ## Überblick
 
-RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und H2-Datenbank (entwicklungsnah, einfach zu PostgreSQL migrierbar).
+RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplänen und Statistiken einer Laufgruppe. Die Architektur folgt dem klassischen dreischichtigen Modell: React-Frontend, Spring Boot Backend und Supabase (PostgreSQL) als Datenbank.
 
 ---
 
@@ -26,7 +26,7 @@ RunForge ist eine Web-Applikation zur Verwaltung von Mitgliedern, Trainingsplän
 | ORM | Spring Data JPA / Hibernate | — |
 | Validierung | Jakarta Validation | — |
 | Datenbank | Supabase (PostgreSQL) | 15+ |
-| DB-Name | RunForgeDb | — |
+| DB-Name | postgres (Supabase-Standard) | — |
 
 ---
 
@@ -115,7 +115,7 @@ runforge/
 ┌─────────────────────────────────────────────────────────┐
 │              DATENBANK  ·  Supabase (PostgreSQL)          │
 │        members · training_plans · plan_assignments       │
-│               DB-Name: RunForgeDb                         │
+│                   DB-Name: postgres                      │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -230,6 +230,9 @@ Member ──────────────────── PlanAssignme
 spring.application.name=runforge-backend
 server.port=8080
 
+# Lokale Secrets aus backend/.env laden (echte Umgebungsvariablen haben Vorrang)
+spring.config.import=optional:file:.env[.properties],optional:file:backend/.env[.properties]
+
 # Supabase (PostgreSQL) - Verbindungsdaten via Umgebungsvariablen
 spring.datasource.url=${SUPABASE_DB_URL:jdbc:postgresql://localhost:5432/RunForgeDb}
 spring.datasource.username=${SUPABASE_DB_USER:postgres}
@@ -244,7 +247,7 @@ spring.h2.console.enabled=false
 spring.sql.init.mode=${SPRING_SQL_INIT_MODE:never}
 ```
 
-Die tatsächlichen Werte für `SUPABASE_DB_URL`, `SUPABASE_DB_USER` und `SUPABASE_DB_PASSWORD` werden **nicht** im Code hinterlegt, sondern als Umgebungsvariablen gesetzt. Eine Vorlage dafür liefert `backend/.env.example`.
+Die tatsächlichen Werte für `SUPABASE_DB_URL`, `SUPABASE_DB_USER` und `SUPABASE_DB_PASSWORD` werden **nicht** im Code hinterlegt, sondern in `backend/.env` (wird nicht committet) oder als Umgebungsvariablen gesetzt. Eine Vorlage dafür liefert `backend/.env.example`.
 
 ### Frontend `vite.config.ts`
 
@@ -264,12 +267,13 @@ export default defineConfig({
 
 ## Starten
 
+Voraussetzungen: **Java 21** (`java -version` bzw. `JAVA_HOME` prüfen) und eine ausgefüllte `backend/.env` (Vorlage: `backend/.env.example`). Maven muss nicht installiert sein — der Maven Wrapper (`mvnw`) liegt im Backend.
+
 ```bash
 # Backend
 cd backend
-./mvnw spring-boot:run
+./mvnw spring-boot:run      # Windows (cmd): mvnw.cmd spring-boot:run
 # → http://localhost:8080
-# → http://localhost:8080/h2-console
 
 # Frontend (neues Terminal)
 cd frontend
@@ -282,7 +286,9 @@ npm run dev
 
 ## Datenbank: Supabase (PostgreSQL)
 
-RunForge nutzt Supabase als produktive PostgreSQL-Datenbank (DB-Name: `RunForgeDb`). Die JDBC-Treiber-Dependency (`org.postgresql:postgresql`) ist bereits in `backend/pom.xml` enthalten.
+RunForge nutzt Supabase als produktive PostgreSQL-Datenbank (DB-Name: `postgres`, Supabase-Standard). Die JDBC-Treiber-Dependency (`org.postgresql:postgresql`) ist bereits in `backend/pom.xml` enthalten.
+
+**Wichtig:** `SUPABASE_DB_URL` ist eine JDBC-URL (`jdbc:postgresql://...`), **nicht** die Projekt-/API-URL (`https://<ref>.supabase.co`). Den passenden Connection String findest du im Supabase-Dashboard unter **Connect → Session pooler** (funktioniert auch ohne IPv6). Beim Pooler lautet der Benutzer `postgres.<project-ref>`, das Passwort ist das Datenbank-Passwort (nicht der API-Key).
 
 Verbindungsdaten werden ausschließlich über Umgebungsvariablen konfiguriert (siehe Abschnitt „Backend `application.properties`" oben sowie `backend/.env.example`). Es sind keine Zugangsdaten im Code oder in `application.properties` hinterlegt.
 
